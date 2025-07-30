@@ -20,7 +20,12 @@ export class ProductsController {
 
   async index(req: Request, res: Response, next: NextFunction) {
     try {
-      return res.json({ message: 'ok' })
+      const { name } = req.query
+      const products = await knex<ProductTable>('products')
+        .select()
+        .whereLike('name', `%${name ?? ''}%`)
+        .orderBy('price')
+      return res.json(products)
     } catch (e) {
       next(e)
     }
