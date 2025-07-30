@@ -1,7 +1,7 @@
 export default {
   client: 'sqlite3',
   connection: {
-    filename: './src/database/database.bd',
+    filename: './src/database/database.db',
   },
   pool: {
     afterCreate: (connection: any, done: any) => {
