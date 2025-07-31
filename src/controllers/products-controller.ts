@@ -45,9 +45,20 @@ export class ProductsController {
         price: z.number().gt(0),
       })
 
+      const product = await knex<ProductTable>('products')
+        .select()
+        .where({ id })
+        .first()
+
+      if (!product) {
+        throw new AppError('Product not found')
+      }
+
       const { name, price } = bodySchema.parse(req.body)
 
-      await knex<ProductTable>('products').update({ name, price }).where({ id })
+      await knex<ProductTable>('products')
+        .update({ name, price, updated_at: knex.fn.now() })
+        .where({ id })
 
       res.json()
     } catch (e) {
@@ -68,7 +79,7 @@ export class ProductsController {
         .where({ id })
         .first()
 
-      if(!product){
+      if (!product) {
         throw new AppError('Product not found')
       }
 
