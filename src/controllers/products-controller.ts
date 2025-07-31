@@ -30,4 +30,27 @@ export class ProductsController {
       next(e)
     }
   }
+
+  async update(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = z
+        .string()
+        .transform((value) => Number(value))
+        .refine((value) => !isNaN(value), { message: 'id must be a number' })
+        .parse(req.params.id)
+
+      const bodySchema = z.object({
+        name: z.string().trim().min(3),
+        price: z.number().gt(0),
+      })
+
+      const { name, price } = bodySchema.parse(req.body)
+
+      await knex<ProductTable>('products').update({ name, price }).where({ id })
+
+      res.json()
+    } catch (e) {
+      next(e)
+    }
+  }
 }
